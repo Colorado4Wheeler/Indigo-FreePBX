@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 
 <Devices>
+	<!-- =========== SERVER =========== -->
 	<Device type="sensor" id="Server">
 		<Name>FreePBX Server</Name>
 		<ConfigUI>
@@ -26,11 +27,6 @@
 			</Field>
 		
 			<!-- *********** PLUGIN DEVICE FEATURES *********** -->
-			<Field id="deviceone" type="menu" >
-				<Label>Device 1:</Label>
-				<List class="indigo.devices" />
-			</Field>
-
 			<Field id="ipaddress" type="textfield" defaultValue="192.168.1.1">
 				<Label>Server IP address:</Label>
 			</Field>
@@ -42,6 +38,11 @@
 			<Field id="key" type="textfield" defaultValue="">
 				<Label>Token key:</Label>
 			</Field>
+			
+			<Field id="frequency" type="textfield" defaultValue="15">
+				<Label>Polling frequency:</Label>
+			</Field>
+			
 		</ConfigUI>
 		<States>
 			<State id="onOffState">
@@ -54,8 +55,9 @@
 		<UiDisplayStateId>onOffState</UiDisplayStateId>
 	</Device>
 	
+	<!-- =========== EXTENSION =========== -->
 	<Device type="sensor" id="Extension">
-		<Name>FreePBX Extension</Name>
+		<Name>Extension</Name>
 		<ConfigUI>
 			<!-- *********** INDIGO HARD CODED DEVICE FEATURES *********** -->
 			<Field id="SupportsOnState" type="checkbox" defaultValue="true" hidden="true">
@@ -70,7 +72,7 @@
 				<Label>Enable status request / refresh button:</Label>
 			</Field>
 			
-			<Field id="AllowOnStateChange" type="checkbox" defaultValue="false" hidden="true">
+			<Field id="AllowOnStateChange" type="checkbox" defaultValue="true" hidden="true">
 				<Label>Enable controls to override on/off state</Label>
 			</Field>
 			
@@ -88,6 +90,63 @@
 				<Label>Extension number:</Label>
 			</Field>
 			
+			<Field id="method" type="menu" defaultValue="ext" >
+				<Label>Show address as:</Label>
+				<List>
+					<Option value="ext">Ext. # on Server Name</Option>
+					<Option value="status">Extension Status</Option>
+					<Option value="fwd">Forward Number or Extension Status</Option>
+				</List>
+			</Field>
+			
+			<Field id="onaction" type="menu" defaultValue="none" >
+				<Label>Turning on will:</Label>
+				<List>
+					<Option value="none">Do nothing</Option>
+					<Option value="dnd">Turn on DND</Option>
+					<Option value="cf">Turn on CF</Option>
+					<Option value="cfu">Turn on CFU</Option>
+					<Option value="cfb">Turn on CFB</Option>	
+				</List>
+			</Field>
+			
+			<Field id="cfnumber" type="textfield" defaultValue="" visibleBindingId="onaction" visibleBindingValue="cf,cfu,cfb" alwaysUseInDialogHeightCalc="true">
+				<Label>Number:</Label>
+			</Field>
+			
+			<Field id="offaction" type="menu" defaultValue="none" >
+				<Label>Turning off will:</Label>
+				<List>
+					<Option value="none">Do nothing</Option>
+					<Option value="dnd">Turn off DND</Option>
+					<Option value="cf">Turn off CF</Option>
+					<Option value="cfu">Turn off CFU</Option>
+					<Option value="cfb">Turn off CFB</Option>	
+					<Option value="cfall">Turn off all forwarding</Option>
+					<Option value="all">Turn off all features</Option>
+				</List>
+			</Field>
+			
+			<Field id="ison" type="menu" defaultValue="notready" >
+				<Label>Is ON when:</Label>
+				<List>
+					<Option value="notready">Any feature is enabled</Option>
+					<Option value="ready">No feature is enabled</Option>
+					<Option value="dnd">DND is on</Option>
+					<Option value="notdnd">DND is off</Option>
+					<Option value="cf">CF is on</Option>
+					<Option value="notcf">CF is off</Option>					
+					<Option value="cfu">CFU is on</Option>
+					<Option value="notcfu">CFU is off</Option>					
+					<Option value="cfb">CFB is on</Option>
+					<Option value="notcfb">CFB is off</Option>
+				</List>
+			</Field>
+
+			<Field id="label_ison" type="label" fontColor="darkgray" fontSize="mini" alignWithControl="true" >
+                <Label>Select what condition must exist for this device to report as being on.  If the opposite is true then it will report as being off.</Label>
+            </Field>
+			
 		</ConfigUI>
 		<States>
 			<State id="dnd" defaultValue="disabled">
@@ -99,6 +158,17 @@
 				</ValueType>
 				<TriggerLabel>Do Not Disturb</TriggerLabel>
 				<ControlPageLabel>Do Not Disturb</ControlPageLabel>
+			</State>
+			
+			<State id="callwaiting" defaultValue="enabled">
+				<ValueType>
+					<List>
+						<Option value="enabled">Enabled</Option>
+						<Option value="disabled">Disabled</Option>
+					</List>
+				</ValueType>
+				<TriggerLabel>Call Waiting</TriggerLabel>
+				<ControlPageLabel>Call Waiting</ControlPageLabel>
 			</State>
 			
 			<State id="cfunconditional" defaultValue="disabled">
@@ -161,4 +231,38 @@
 		</States>
 		<UiDisplayStateId>onOffState</UiDisplayStateId>
 	</Device>	
+	
+	<!-- =========== CALL FLOW =========== -->
+	<Device type="relay" id="CallFlow">
+		<Name>Call Flow (Day/Night)</Name>
+		<ConfigUI>
+			<!-- *********** INDIGO HARD CODED DEVICE FEATURES *********** -->
+			<Field id="SupportsStatusRequest" type="checkbox" defaultValue="false" hidden="true">
+				<Label>Enable status request / refresh button:</Label>
+			</Field>
+			
+			<!-- *********** PLUGIN DEVICE FEATURES *********** -->
+			<Field id="server" type="menu" >
+				<Label>Server:</Label>
+				<List class="indigo.devices" filter="com.eps.indigoplugin.freepbx.Server" />
+				<CallbackMethod>device_field_changed</CallbackMethod>
+			</Field>
+			
+			<Field id="callflow" type="menu" defaultValue="0" >
+				<Label>Call flow:</Label>
+				<List class="self" filter="" method="list_call_flows" dynamicReload="true"/>
+				<CallbackMethod>device_field_changed</CallbackMethod>
+			</Field>
+		</ConfigUI>
+		<States>
+			<State id="onOffState">
+				<ValueType boolType="OnOff">Boolean</ValueType>
+				<TriggerLabel>Security state</TriggerLabel>
+				<ControlPageLabel>Security state</ControlPageLabel>
+			</State>
+			
+		</States>
+		<UiDisplayStateId>onOffState</UiDisplayStateId>
+	</Device>	
+	
 </Devices>
