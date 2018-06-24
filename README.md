@@ -1,3 +1,5 @@
+![](https://github.com/Colorado4Wheeler/WikiDocs/blob/master/FreePBX/freepbx-logo-250.png)
+
 # FreePBX
 
 This plugin for the [Indigo Domotics](http://www.indigodomo.com/) home automation platform that interacts with your [FreePBX](http://www.freepbx.org/) telephone system to allow you to control your PBX and extensions via Indigo.
@@ -12,4 +14,9 @@ Once the RestAPI module is installed, open it to get the Token and Token Key, th
 
 ## BETA Product
 
-This is currently in beta, there is a lot planned for this if there is interest, currently this supports turning Do Not Disturb on or off for any extension and setting the Call Forwarding settings for any extension.
+This is currently in beta, there is a lot planned for this if there is interest, currently this supports:
+
+* Do Not Disturb (Enabling/disabling for any extension, showing status)
+* Call Forwarding (Enabling/disabling for any extension, showing status)
+* Call Waiting (Showing status)
+* Call Flow - aka Day/Night ((Enabling/disabling any flow, showing status)
