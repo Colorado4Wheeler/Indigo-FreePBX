@@ -1,8 +1,15 @@
 Release Notes
 ==========
 
-Version 1.0.0-b2 (BETA 2)
+Version 1.0.0
+---------------
+* Added to the Indigo Plugin store
+
+Previous Release Notes
 ==========
+
+Version 1.0.0-b2 (BETA 2)
+---------------
 * Added automatic address calculation
 * Added field to choose how you want an extensions address to be calculated
 * Added field to set optional action when turning an extension device on
@@ -14,8 +21,6 @@ Version 1.0.0-b2 (BETA 2)
 * Fixed issue where the call forwarding unconditional number device state would get the busy number instead
 * Fixed bug where actions to turn off forwarding selectively would turn off all forwarding
 
-Previous Release Notes
-==========
 
 Version 1.0.0-b1 (BETA 1)
 ---------------
